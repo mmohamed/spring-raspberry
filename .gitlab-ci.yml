@@ -1,0 +1,49 @@
+image: openjdk:8
+
+before_script:
+  - apt-get -qq update
+  - apt-get install -y -qq maven ant
+  - DEBIAN_FRONTEND=noninteractive apt-get install -y -qq mysql-server
+  - /etc/init.d/mysql restart
+  - mysql -hlocalhost -P3306 -uroot -e"CREATE DATABASE rasp_test"
+  - mysql -hlocalhost -P3306 -uroot -e"CREATE USER 'rasp'@'localhost' IDENTIFIED BY 'rasp'"
+  - mysql -hlocalhost -P3306 -uroot -e"GRANT ALL ON rasp_test.* TO 'rasp'@'localhost'"
+    
+test: 
+  stage: test
+  script:
+    - mvn --quiet --errors --batch-mode cobertura:cobertura -Dcobertura.report.format=summaryXml
+    - cat target/site/cobertura/coverage-summary.xml
+
+pages:
+  stage: deploy
+  dependencies:
+    - test
+  script:
+    - mvn clean --quiet --errors
+    - mvn --quiet --errors --batch-mode cobertura:cobertura -Dcobertura.report.format=html
+    - mvn --quiet --errors --batch-mode javadoc:javadoc
+    - mkdir public
+    - mv target/site/cobertura/ public/coverage
+    - mv target/site/apidocs/ public/javadoc
+    - cp src/main/resources/static/pages/index.html public/index.html
+  artifacts:
+    paths:
+      - public
+    expire_in: 30 days
+  only:
+    - master
+    
+deploy:
+  stage: deploy
+  dependencies:
+    - test
+  script:
+    - mvn clean package -Dmaven.test.skip=true
+    - cp build.xml.docker-deploy-ini build.xml
+    - sed -i "s/x.x.x.x/[YOUR_RASP_DOMAIN_OR_IP]/g" build.xml
+    - sed -i "s/xx.xx/[YOUR_RASP_SSH_LOGIN]/g" build.xml
+    - sed -i "s/xx/[YOUR_RASP_SSH_PASSWORD]/g" build.xml
+    - ant -lib ./ant-lib
+  only:
+    - master

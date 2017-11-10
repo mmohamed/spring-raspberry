@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head th:replace="fragments/header :: header"></head>
+
+  <body class="nav-md">
+    <div class="container body">
+      <div class="main_container">
+        
+        <div th:replace="fragments/panel :: left"></div>
+        <div th:replace="fragments/panel :: nav"></div>
+
+        <!-- page content -->
+        <div class="right_col" role="main">
+			<div>
+				<div class="page-title">
+					<div class="title_left">
+						<h3>
+							Users
+						</h3>
+					</div>
+				</div>
+
+				<div class="clearfix"></div>
+				<div class="row">
+					<div class="col-md-12 col-sm-12 col-xs-12">
+						<div class="x_panel">
+							<div class="x_title">
+								<h2>
+									New
+								</h2>
+								
+								<div class="clearfix"></div>
+								
+							</div>
+							<div class="x_content">
+
+								<fieldset th:if="${#fields.hasErrors('${user.*}')}" class="text-warning">
+									<legend>Some errors appeared !</legend>
+									<ul>
+										<li th:each="err : ${#fields.errors('user.*')}" th:text="${err}"></li>
+									</ul>
+								</fieldset>
+								
+								<form action="#" th:action="@{/admin/user/new}" th:object="${user}" method="post" class="form-horizontal form-label-left" novalidate="novalidate">
+									
+									<div th:class="${#fields.hasErrors('firstName')} ? 'form-group has-error' : 'form-group'">
+			                        	<label class="control-label col-md-3 col-sm-3 col-xs-12" for="firstName">First Name <span class="required">*</span></label>
+			                        	<div class="col-md-6 col-sm-6 col-xs-12">
+			                          		<input type="text" th:field="*{firstName}" required="required" class="form-control col-md-7 col-xs-12">
+			                        	</div>
+			                      	</div>
+			                      	
+			                      	<div th:class="${#fields.hasErrors('lastName')} ? 'form-group has-error' : 'form-group'">
+			                        	<label class="control-label col-md-3 col-sm-3 col-xs-12" for="lastName">Last Name <span class="required">*</span></label>
+			                        	<div class="col-md-6 col-sm-6 col-xs-12">
+			                          		<input type="text" th:field="*{lastName}" required="required" class="form-control col-md-7 col-xs-12">
+			                        	</div>
+			                      	</div>
+			                      	
+			                      	<div th:class="${#fields.hasErrors('email')} ? 'form-group has-error' : 'form-group'">
+			                        	<label class="control-label col-md-3 col-sm-3 col-xs-12" for="email">Email <span class="required">*</span></label>
+			                        	<div class="col-md-6 col-sm-6 col-xs-12">
+			                          		<input type="text" th:field="*{email}" required="required" class="form-control col-md-7 col-xs-12">
+			                        	</div>
+			                      	</div>
+			                      	
+			                      	<div th:class="${#fields.hasErrors('password')} ? 'form-group has-error' : 'form-group'">
+			                        	<label class="control-label col-md-3 col-sm-3 col-xs-12" for="password">Password <span class="required">*</span></label>
+			                        	<div class="col-md-6 col-sm-6 col-xs-12">
+			                          		<input type="password" th:field="*{password}" required="required" class="form-control col-md-7 col-xs-12">
+			                        	</div>
+			                      	</div>
+			                      	
+			                      	<div th:class="${#fields.hasErrors('password')} ? 'form-group has-error' : 'form-group'">
+			                        	<label class="control-label col-md-3 col-sm-3 col-xs-12" for="repeatpassword">Repeat-Password <span class="required">*</span></label>
+			                        	<div class="col-md-6 col-sm-6 col-xs-12">
+			                          		<input type="password" id="repeatpassword" name="repeatpassword" required="required" class="form-control col-md-7 col-xs-12">
+			                        	</div>
+			                      	</div>
+			                      	
+			                      	<div th:class="${#fields.hasErrors('roles')} ? 'form-group has-error' : 'form-group'">
+				                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="roles">Roles <span class="required">*</span></label>				                        
+				                        <div class="clearfix"></div>					                        
+				                        <div class="col-md-10 col-sm-10 col-xs-12" th:each="role : ${roles}">
+				                        	<div class="col-md-3 col-sm-3 col-xs-12"></div>
+				                        	<div class="col-md-9 col-sm-9 col-xs-12 checkbox">
+                            			    	<label>
+                              						<input th:field="*{roles}" type="checkbox" class="flat" th:value="${role.id}" th:text="${role.role}">
+                            					</label>
+                          					</div> 
+				                        </div>				                                                			
+				                    </div>
+				                    
+			                      	<div class="ln_solid"></div>
+			                      	
+			                      	<div class="form-group">
+				                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+				                          	<a href="/admin/user" class="btn btn-primary">Cancel</a>
+				                        	<button type="submit" class="btn btn-success">Submit</button>
+				                    	</div>
+				                    </div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+        <!-- /page content -->
+		
+		<footer th:replace="fragments/footer :: footer"> </footer>
+      </div>
+    </div>
+	
+	<div th:replace="fragments/footer :: script"> </div>
+	<script type="text/javascript">
+	$(function () {
+		$('input.flat').iCheck({
+        	checkboxClass: 'icheckbox_flat-green'             
+        });
+	});
+	</script>	
+  </body>
+</html>
